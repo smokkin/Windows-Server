@@ -136,6 +136,8 @@ For example, if several users need the same level of access to a folder, it's mo
 
 Before you implement groups in your organization, you must understand the scope of various AD DS group types. In addition, you must understand how to use group types to manage access to resources or to assign management rights and responsibilities.
 
+<img width="775" height="641" alt="image" src="https://github.com/user-attachments/assets/1456ae03-4560-4a2b-ab82-845ffb6fb974" />
+
 ---
 
 ## Group Types
@@ -191,6 +193,8 @@ A computer account begins its lifecycle when you create the computer object and 
 - Moving the computer between OUs.
 - Managing the computer itself.
 - Renaming, resetting, disabling, enabling, and eventually deleting the computer object.
+
+<img width="1003" height="439" alt="image" src="https://github.com/user-attachments/assets/5e19cae9-3212-4b7d-af3a-15dabadbdbba" />
 
 ---
 
