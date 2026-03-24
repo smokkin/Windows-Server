@@ -1,0 +1,144 @@
+# Manage the AD DS Global Catalog Role
+
+As part of planning for domain controller deployments, it's important to identify the optimal number and placement of the global catalog role. This becomes relevant when expanding AD DS environment to other locations, as is the case with Contoso's planned expansion.
+
+## Manage the AD DS Global Catalog Role
+
+The global catalog is a partial, read-only, searchable copy of all the objects in a forest. The global catalog can help speed up searches for objects that might be stored on domain controllers in a different domain in the forest.
+
+Within a single domain, the AD DS database on each domain controller contains all the information about every object in that domain. However, only a subset of this information replicates to the global catalog servers in other domains in the forest. Within a domain, a query for an object is directed to one of the domain controllers in that domain. However, that query doesn't return results about objects in other domains within the forest. For a query to include results from other forest domains, you must query a domain controller that is also a global catalog server.
+
+The global catalog doesn't contain all the attributes for each object. Instead, it maintains the subset of attributes that are most likely to be useful in cross-domain searches. These attributes include, for example, givenName, displayName, and mail. You can change the set of attributes replicated to the global catalog by modifying the AD DS schema.
+
+In a multiple-domain forest, searching the global catalog can be useful in many situations. For example, when a server that's running Microsoft Exchange Server receives an incoming email, it must search for the recipient's account so it can decide how to route the message. By automatically querying the global catalog, the server can find the recipient in a multiple-domain environment. Additionally, when users sign in to their Active Directory accounts, the domain controller that performs the authentication must contact the global catalog to check for universal group memberships before authenticating the users.
+
+In a single domain, you should configure all the domain controllers to have a copy of the global catalog. In multiple-domain and multiple-site forests, it might sometimes make sense to limit the number of domain controllers hosting the global catalog role to reduce the volume of replication traffic, although this is an uncommon scenario. Note, however, that this will introduce dependency on connectivity to other sites when performing global catalog queries.
+
+&gt; **Tip**
+&gt; 
+&gt; Consider configuring every domain controller as a global catalog unless you must reduce replication traffic volume.
+
+---
+
+# Manage AD DS Operations Masters
+
+AD DS uses a multiple-master process to copy data between domain controllers, and automatically implements a conflict resolution algorithm that remediates simultaneous, conflicting updates. These provisions allow for a distributed management model, where multiple users and applications can concurrently apply changes to AD DS objects on different domain controllers. Such a model is necessary to support any AD DS environment with two or more domain controllers. However, it's critical for larger, distributed environments such as Contoso's. It's important to remember though, that certain operations can be performed only by a specific role, on a specific domain controller.
+
+## What are AD DS Operations Masters?
+
+AD DS operation master roles are responsible for performing operations that aren't suitable for a multiple-master model. A domain controller that has one of these roles is an operations master. An operations master role is also known as a Flexible Single Master Operation (FSMO) role. There are five operations master roles:
+
+- Schema master
+- Domain-naming master
+- Infrastructure master
+- RID master
+- PDC emulator master
+
+By default, the first domain controller installed in a forest hosts all five roles. However, you can transfer these roles after deploying additional domain controllers. When performing operations master-specific changes, you must connect to the domain controller with the role. The five operations master roles have the following distribution:
+
+- Each forest has one schema master and one domain naming master.
+- Each AD DS domain has one relative ID (RID) master, one infrastructure master, and one primary domain controller (PDC) emulator.
+- You can place all five on a single domain controller, or distribute them across several domain controllers.
+
+### Forest Operations Masters
+
+A forest has the following operations master roles:
+
+- **Domain naming master.** This is the domain controller that you must contact when you add or remove a domain or make domain name changes.
+
+&gt; **Important**
+&gt; 
+&gt; If the domain naming master is unavailable, you won't be able to add domains to the forest.
+
+- **Schema master.** This is the domain controller in which you make all schema changes.
+
+&gt; **Important**
+&gt; 
+&gt; If the schema master is unavailable, you won't be able to make changes to the schema.
+
+&gt; **Note**
+&gt; 
+&gt; The Windows PowerShell command `Get-ADForest`, from the Active Directory module for Windows PowerShell, displays the forest properties, including the current domain naming master and schema master.
+
+### Domain Operations Masters
+
+A domain has the following operations master roles:
+
+- **RID master.** Whenever you create a security principal such as a user, computer, or group in AD DS, the domain controller where you created the object assigns the object a unique identifying number known as a security ID (SID). To ensure that no two domain controllers assign the same SID to two different objects, the RID master allocates blocks of RIDs to each domain controller within the domain to use when building SIDs.
+
+&gt; **Important**
+&gt; 
+&gt; If the RID master is unavailable, you might experience difficulties adding security principals to the domain. Also, as domain controllers use their existing RIDs, they eventually run out of them and are unable to create new objects.
+
+- **Infrastructure master.** This role maintains interdomain object references, such as when a group in one domain has a member from another domain. In this situation, the infrastructure master manages maintaining the integrity of this reference. For example, when you review an object's Security tab, the system references the listed SIDs and translates them into names. In a multiple-domain forest, the infrastructure master updates references to SIDs from other domains with the corresponding security principal names.
+
+&gt; **Important**
+&gt; 
+&gt; If the infrastructure master is unavailable, domain controllers that aren't global catalogs won't be able to perform translation of SIDs security principal names.
+
+&gt; **Important**
+&gt; 
+&gt; The infrastructure master role shouldn't reside on the domain controller that's hosting the global catalog role unless every domain controller in the forest is configured to serve as a global catalog. In this case, the infrastructure master role isn't necessary because every domain controller knows about every object in the forest.
+
+- **PDC emulator master.** The domain controller that is the PDC emulator master serves as the time source for the domain. The PDC emulator master in each domain in a forest synchronizes their time with the PDC emulator master in the forest root domain. You set the PDC emulator master in the forest root domain to synchronize with a reliable external time source. Additionally, by default, changes to Group Policy Objects (GPOs) are by default written to the PDC Emulator master. The PDC emulator master is also the domain controller that receives urgent password changes. If a user's password changes, the domain controller with the PDC emulator master role receives this information immediately. This means that if the user tries to sign in, the domain controller in the user's current location contacts the domain controller with the PDC emulator master role to check for recent changes. This occurs even if a domain controller in a different location that hadn't yet received the new password information authenticated the user.
+
+&gt; **Important**
+&gt; 
+&gt; If the PDC emulator master is unavailable, users might have trouble signing in until their password changes have replicated to all the domain controllers.
+
+> Note
+> 
+> The Windows PowerShell command `Get-ADDomain`, from the Active Directory module for Windows PowerShell, displays the domain properties, including the current RID master, infrastructure master, and PDC emulator master.
+
+## Manage AD DS Operations Masters
+
+In an AD DS environment where you distribute operations master roles among domain controllers, you might need to move a role from one domain controller to another. When you perform a move in a planned manner between two online domain controllers, the move is known as transferring the role. In emergencies, if the current role holder isn't available, the move is known as seizing the role. When you transfer a role, the latest data from the domain controller in that role replicates to the target server.
+
+> Important
+> 
+> You should seize a role only as a last resort when there's no chance for recovering the current role holder.
+
+### Transfer Operations Master Roles
+
+You can transfer operations master roles by using the AD DS snap-ins that the following table lists.
+
+| Role | Snap-in |
+|------|---------|
+| Schema master | Active Directory Schema |
+| Domain-naming master | Active Directory Domains and Trusts |
+| Infrastructure master | Active Directory Users and Computers |
+| RID master | Active Directory Users and Computers |
+| PDC emulator master | Active Directory Users and Computers |
+
+### Seize Operations Master Roles
+
+You cannot use AD DS snap-ins to seize operations master roles. Instead, you must use either the `ntdsutil.exe` command-line tool or Windows PowerShell to seize roles.
+
+> Note
+>
+> You can also use these tools to transfer roles.
+
+The syntax for transferring a role and seizing a role is similar within Windows PowerShell, as the following syntax line demonstrates:
+
+```powershell
+Move-ADDirectoryServerOperationsMasterRole -Identity "<servername>" -OperationsMasterRole "<rolenamelist>" -Force
+
+For the preceding syntax, the noteworthy definitions are as follows:
+
+- **servername.** The name of the target domain controller to which you're transferring one or more roles.
+- **rolenamelist.** A comma-separated list of AD DS role names to move to the target server.
+- **-Force.** An optional parameter that you include to seize a role instead of transferring it.
+
+## Demonstration
+
+The following video demonstrates how to:
+
+- Identify placement of operations master roles.
+- Transfer operations master roles between domain controllers.
+
+The main steps in the process are:
+
+1. Create AD DS environment. Create a single domain AD DS forest containing two domain controllers.
+2. Check the placement of operations master roles. Identify which of the two domain controllers hosts the operations master roles.
+3. Transfer operations master roles between domain controllers by using the GUI tools. Use the GUI tools to transfer the operations masters roles from the domain controller you identified in the previous step to the other one.
+4. Transfer operations master roles between domain controllers by using command-line tools. Use the command-line tools to transfer the operations masters roles back to the first domain controller.
