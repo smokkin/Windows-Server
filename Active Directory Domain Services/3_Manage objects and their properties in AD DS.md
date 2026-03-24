@@ -49,7 +49,7 @@ A screenshot of the Add an optional feature dialog box. Displayed are a list of 
 
 > Note
 > 
-&gt; You enable RSAT tools from the Settings app. In Settings, search for Manage optional features, select Add a feature, and then select the appropriate RSAT tools from the returned list. Select Install to add the feature.
+> You enable RSAT tools from the Settings app. In Settings, search for Manage optional features, select Add a feature, and then select the appropriate RSAT tools from the returned list. Select Install to add the feature.
 
 You can install the consoles available within RSAT on computers running Windows 10 or on server computers that are running the Server with Desktop Experience option of a Windows Server installation. Until the introduction of Windows Admin Center, RSAT consoles were the primary graphical tools for administering the Windows Server operating system.
 
