@@ -122,7 +122,7 @@ The syntax for transferring a role and seizing a role is similar within Windows 
 
 ```powershell
 Move-ADDirectoryServerOperationsMasterRole -Identity "<servername>" -OperationsMasterRole "<rolenamelist>" -Force
-
+```
 For the preceding syntax, the noteworthy definitions are as follows:
 
 - **servername.** The name of the target domain controller to which you're transferring one or more roles.
