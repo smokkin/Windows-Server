@@ -20,6 +20,7 @@ As part of AD DS role configuration, you need to provide answers to the question
 | Where will the database, log files and SYSVOL folders be created? | By default, the database and log files folder is located at `C:\Windows\NTDS`. By default, the SYSVOL folder is located at `C:\Windows\SYSVOL`. |
 
 <img width="665" height="464" alt="image" src="https://github.com/user-attachments/assets/f5620ba6-371d-4cb3-90f3-e04bfda88f7b" />
+
 > A screenshot of the Active Directory Domain Services Configuration Wizard Deployment Configuration page is set to add a domain controller to an existing domain.
 
 ## Install a Domain Controller on a Server Core Installation of Windows Server
