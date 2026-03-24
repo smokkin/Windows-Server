@@ -78,3 +78,15 @@ Demonstration on how to manage objects in AD DS by using Active Directory Admini
 5. Create a new computer object called SEA-CL4.
 6. Open the new computer object and review its properties, including its Extensions.
 7. Review the Windows PowerShell history and examine the New-ADComputer command.
+
+# Summary
+
+Contoso's IT staff are migrating Contoso on-premises servers to Windows Server 2025. As part of the migration, Contoso evaluated its current AD DS environment. As a Windows Server administrator, you've been responsible for managing AD DS objects, such as users, groups, and OUs. You now understand the fundamental AD DS structure and how users, groups, and group managed service accounts relate to OUs.
+
+## Learn more
+
+- [Active Directory Domain Services Overview](https://docs.microsoft.com/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview)
+- [Create an outbound forest trust to an on-premises domain in Microsoft Entra Domain Services](https://docs.microsoft.com/azure/active-directory-domain-services/create-forest-trust)
+- [Group Managed Service Accounts Overview](https://docs.microsoft.com/windows-server/security/group-managed-service-accounts/group-managed-service-accounts-overview)
+- [Delegated Managed Service Accounts Overview](https://docs.microsoft.com/windows-server/security/delegated-managed-service-accounts/delegated-managed-service-accounts-overview)
+- [Delegating Administration of Account OUs and Resource OUs](https://docs.microsoft.com/windows-server/identity/ad-ds/plan/delegating-administration-of-account-ous-and-resource-ous)
