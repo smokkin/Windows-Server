@@ -131,7 +131,7 @@ For the preceding syntax, the noteworthy definitions are as follows:
 
 ## Demonstration
 
-The following video demonstrates how to:
+The following steps demonstrates how to:
 
 - Identify placement of operations master roles.
 - Transfer operations master roles between domain controllers.
