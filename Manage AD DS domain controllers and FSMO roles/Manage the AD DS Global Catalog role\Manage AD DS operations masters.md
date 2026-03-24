@@ -14,9 +14,9 @@ In a multiple-domain forest, searching the global catalog can be useful in many 
 
 In a single domain, you should configure all the domain controllers to have a copy of the global catalog. In multiple-domain and multiple-site forests, it might sometimes make sense to limit the number of domain controllers hosting the global catalog role to reduce the volume of replication traffic, although this is an uncommon scenario. Note, however, that this will introduce dependency on connectivity to other sites when performing global catalog queries.
 
-&gt; **Tip**
-&gt; 
-&gt; Consider configuring every domain controller as a global catalog unless you must reduce replication traffic volume.
+> Tip
+> 
+> Consider configuring every domain controller as a global catalog unless you must reduce replication traffic volume.
 
 ---
 
@@ -46,19 +46,19 @@ A forest has the following operations master roles:
 
 - **Domain naming master.** This is the domain controller that you must contact when you add or remove a domain or make domain name changes.
 
-&gt; **Important**
-&gt; 
-&gt; If the domain naming master is unavailable, you won't be able to add domains to the forest.
+> Important
+>  
+> If the domain naming master is unavailable, you won't be able to add domains to the forest.
 
 - **Schema master.** This is the domain controller in which you make all schema changes.
 
-&gt; **Important**
-&gt; 
-&gt; If the schema master is unavailable, you won't be able to make changes to the schema.
+> Important
+> 
+> If the schema master is unavailable, you won't be able to make changes to the schema.
 
-&gt; **Note**
-&gt; 
-&gt; The Windows PowerShell command `Get-ADForest`, from the Active Directory module for Windows PowerShell, displays the forest properties, including the current domain naming master and schema master.
+> Note
+> 
+> The Windows PowerShell command `Get-ADForest`, from the Active Directory module for Windows PowerShell, displays the forest properties, including the current domain naming master and schema master.
 
 ### Domain Operations Masters
 
@@ -66,25 +66,25 @@ A domain has the following operations master roles:
 
 - **RID master.** Whenever you create a security principal such as a user, computer, or group in AD DS, the domain controller where you created the object assigns the object a unique identifying number known as a security ID (SID). To ensure that no two domain controllers assign the same SID to two different objects, the RID master allocates blocks of RIDs to each domain controller within the domain to use when building SIDs.
 
-&gt; **Important**
-&gt; 
-&gt; If the RID master is unavailable, you might experience difficulties adding security principals to the domain. Also, as domain controllers use their existing RIDs, they eventually run out of them and are unable to create new objects.
+> Important
+> 
+> If the RID master is unavailable, you might experience difficulties adding security principals to the domain. Also, as domain controllers use their existing RIDs, they eventually run out of them and are unable to create new objects.
 
 - **Infrastructure master.** This role maintains interdomain object references, such as when a group in one domain has a member from another domain. In this situation, the infrastructure master manages maintaining the integrity of this reference. For example, when you review an object's Security tab, the system references the listed SIDs and translates them into names. In a multiple-domain forest, the infrastructure master updates references to SIDs from other domains with the corresponding security principal names.
 
-&gt; **Important**
-&gt; 
-&gt; If the infrastructure master is unavailable, domain controllers that aren't global catalogs won't be able to perform translation of SIDs security principal names.
+> Important
+> 
+> If the infrastructure master is unavailable, domain controllers that aren't global catalogs won't be able to perform translation of SIDs security principal names.
 
-&gt; **Important**
-&gt; 
-&gt; The infrastructure master role shouldn't reside on the domain controller that's hosting the global catalog role unless every domain controller in the forest is configured to serve as a global catalog. In this case, the infrastructure master role isn't necessary because every domain controller knows about every object in the forest.
+> Important
+>  
+> The infrastructure master role shouldn't reside on the domain controller that's hosting the global catalog role unless every domain controller in the forest is configured to serve as a global catalog. In this case, the infrastructure master role isn't necessary because every domain controller knows about every object in the forest.
 
 - **PDC emulator master.** The domain controller that is the PDC emulator master serves as the time source for the domain. The PDC emulator master in each domain in a forest synchronizes their time with the PDC emulator master in the forest root domain. You set the PDC emulator master in the forest root domain to synchronize with a reliable external time source. Additionally, by default, changes to Group Policy Objects (GPOs) are by default written to the PDC Emulator master. The PDC emulator master is also the domain controller that receives urgent password changes. If a user's password changes, the domain controller with the PDC emulator master role receives this information immediately. This means that if the user tries to sign in, the domain controller in the user's current location contacts the domain controller with the PDC emulator master role to check for recent changes. This occurs even if a domain controller in a different location that hadn't yet received the new password information authenticated the user.
 
-&gt; **Important**
-&gt; 
-&gt; If the PDC emulator master is unavailable, users might have trouble signing in until their password changes have replicated to all the domain controllers.
+> Important
+> 
+> If the PDC emulator master is unavailable, users might have trouble signing in until their password changes have replicated to all the domain controllers.
 
 > Note
 > 
